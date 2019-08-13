@@ -139,7 +139,7 @@ if (process.argv[2] === "do-what-it-says") {
     });
 }
 
-else {
+if (!process.argv[2]) {
     console.log("Please enter valid command");
 }
 
