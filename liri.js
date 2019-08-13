@@ -168,3 +168,7 @@ if (!process.argv[2]) {
     console.log("Please enter valid command");
 }
 
+else {
+    console.log("Please enter valid command");
+}
+
