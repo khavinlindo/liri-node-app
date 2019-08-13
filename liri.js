@@ -65,6 +65,27 @@ var getMovie = function(film) {
   }
 }
 
+var getSong = function(song) {
+spotify
+   .search({ type: "track", query: song, limit: 1 })
+   .then(function(res) {
+     
+     var track = res.tracks.items[0];
+     var artists = [];
+     //console.log(track.album.name);
+     
+    for (i=0;i<track.artists.length;i++) {
+        artists.push(" "+track.artists[i].name);
+    }
+
+     console.log("\nArtist(s): "+artists+"\nName of song: "+track.name+"\nPreview link: "+track.external_urls.spotify+
+     "\nAlbum: "+track.album.name);
+     
+   })
+   .catch(function(err) {
+     console.log("Caught error: "+err);
+   });
+}
 
 
 /*concert-this*/
@@ -75,15 +96,8 @@ if (process.argv[2] === "concert-this") {
 
 /*spotify-this-song*/
 if (process.argv[2] === "spotify-this-song") {
-   spotify
-   .search({ type: "track", query: "Goodbyes" })
-   .then(function(res) {
-     console.log(res);
-   })
-   .catch(function(err) {
-     console.log("Caught error: "+err);
-   });
-
+    var song = process.argv.slice(3).join(" ");
+   getSong(song);
 }
 
 /*movie-this*/
@@ -97,14 +111,12 @@ if (process.argv[2] === "movie-this") {
 if (process.argv[2] === "do-what-it-says") {
     fs.readFile("random.txt", "utf8", function(err, data) {
         if (err) {
-            return console.log(err);
+            return console.log("Caught error: "+err);
         }
 
         var dataArr = data.split(",");
-
         var input = dataArr[1].substring(1, dataArr[1].length-1);
-        console.log(input);
-        
+
        switch(dataArr[0]) {
            case "\nmovie-this":
            var movie = dataArr[1];
@@ -117,13 +129,17 @@ if (process.argv[2] === "do-what-it-says") {
            break;
 
            case "\nspotify-this-song":
-           getSong();
+           var song = input;
+           getSong(song);
            break;
 
            default:
             console.log("Please enter valid input");
-       }
-      
+       } 
     });
+}
+
+else {
+    console.log("Please enter valid command");
 }
 
