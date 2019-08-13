@@ -11,49 +11,27 @@ var fs = require("fs");
 var spotify = new Spotify(keys.spotify);
 
 
-
-//var arg1 = process.argv[2];
-//var arg2 = process.argv[3];
-
-
-/*concert-this*/
-if (process.argv[2] === "concert-this") {
- var artist = process.argv.slice(3).join(" ");
- console.log(artist);
+var getConcertInfo = function(artist) {
   
  axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
      .then(function(res) {
-         //console.log(movie.length);
-         var dateOfEvent = movie.datetime;
-     
-         for(i=0;i<movie.length;i++) {
-            console.log("\n------------Event "+(i+1)+"----------\nName of the venue: "+movie[i].venue.name+
-            "\nVenue location: "+movie[i].venue.city+", "+movie[i].venue.region+". "+movie[i].venue.country+
+        
+        var band = res.data;
+        var dateOfEvent = band.datetime;
+         
+        for(i=0;i<band.length;i++) {
+            console.log("\n------------Event "+(i+1)+"----------\nName of the venue: "+band[i].venue.name+
+            "\nVenue location: "+band[i].venue.city+", "+band[i].venue.region+". "+band[i].venue.country+
             "\nDate of the Event: "+moment(dateOfEvent).format("MM/DD/YYYY"));
          }  
      })
      .catch(function(err) {
-         console.log(err);
+         console.log("Caught error: " + err);
      });
-     
 }
 
-/*spotify-this-song*/
-if (process.argv[2] === "spotify-this-song") {
-   spotify
-   .search({ type: "track", query: "Goodbyes" })
-   .then(function(res) {
-     console.log(res);
-   })
-   .catch(function(err) {
-     console.log("Caught error: "+err);
-   });
-
-}
-
-/*movie-this*/
-if (process.argv[2] === "movie-this") {
-    var film = process.argv.slice(3).join(" ");
+var getMovie = function(film) {
+    //var film = process.argv.slice(3).join(" ");
     
     if (film) {
         axios.get("http://www.omdbapi.com/?t="+film+"&apikey=trilogy")
@@ -88,7 +66,64 @@ if (process.argv[2] === "movie-this") {
 }
 
 
+
+/*concert-this*/
+if (process.argv[2] === "concert-this") {
+    var artist = process.argv.slice(3).join(" ");
+     getConcertInfo(artist);
+}
+
+/*spotify-this-song*/
+if (process.argv[2] === "spotify-this-song") {
+   spotify
+   .search({ type: "track", query: "Goodbyes" })
+   .then(function(res) {
+     console.log(res);
+   })
+   .catch(function(err) {
+     console.log("Caught error: "+err);
+   });
+
+}
+
+/*movie-this*/
+if (process.argv[2] === "movie-this") {
+    var movie = process.argv.slice(3).join(" ");
+   getMovie(movie);
+}
+
+
 /*do-what-it-says*/
+if (process.argv[2] === "do-what-it-says") {
+    fs.readFile("random.txt", "utf8", function(err, data) {
+        if (err) {
+            return console.log(err);
+        }
 
+        var dataArr = data.split(",");
 
+        var input = dataArr[1].substring(1, dataArr[1].length-1);
+        console.log(input);
+        
+       switch(dataArr[0]) {
+           case "\nmovie-this":
+           var movie = dataArr[1];
+           getMovie(movie);
+           break;
+
+           case "\nconcert-this":
+           var artist = input;
+           getConcertInfo(artist);
+           break;
+
+           case "\nspotify-this-song":
+           getSong();
+           break;
+
+           default:
+            console.log("Please enter valid input");
+       }
+      
+    });
+}
 
