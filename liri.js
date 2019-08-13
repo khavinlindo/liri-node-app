@@ -12,8 +12,8 @@ var spotify = new Spotify(keys.spotify);
 
 
 var getConcertInfo = function(artist) {
-  
- axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
+  if (artist) {
+      axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
      .then(function(res) {
         
         var band = res.data;
@@ -26,8 +26,14 @@ var getConcertInfo = function(artist) {
          }  
      })
      .catch(function(err) {
-         console.log("Caught error: " + err);
+         console.log("Sorry, band not found.");
      });
+  }
+
+  else {
+      console.log("Please enter a band name");
+  }
+ 
 }
 
 var getMovie = function(film) {
@@ -164,11 +170,10 @@ if (process.argv[2] === "do-what-it-says") {
     });
 }
 
-if (!process.argv[2]) {
+if (!process.argv[2] || ((process.argv[2] !== "concert-this") && (process.argv[2] !== "movie-this") 
+&& (process.argv[2] !== "spotify-this-song") && (process.argv[2] !== "do-what-it-says"))) {
     console.log("Please enter valid command");
 }
 
-else {
-    console.log("Please enter valid command");
-}
+
 
