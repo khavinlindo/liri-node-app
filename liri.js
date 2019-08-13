@@ -66,6 +66,7 @@ var getMovie = function(film) {
 }
 
 var getSong = function(song) {
+    if (song) {
 spotify
    .search({ type: "track", query: song, limit: 1 })
    .then(function(res) {
@@ -85,13 +86,37 @@ spotify
    .catch(function(err) {
      console.log("Caught error: "+err);
    });
+  }
+
+  else {
+    spotify
+    .search({ type: "track", query: "The Sign", limit: 10 })
+    .then(function(res) {
+      
+      var track = res.tracks.items[4];
+      var artists = [];
+      //console.log(track);
+      
+     for (i=0;i<track.artists.length;i++) {
+         artists.push(" "+track.artists[i].name);
+     }
+ 
+      console.log("\nArtist(s): "+artists+"\nName of song: "+track.name+"\nPreview link: "+track.external_urls.spotify+
+      "\nAlbum: "+track.album.name);
+      
+    })
+    .catch(function(err) {
+      console.log("Caught error: "+err);
+    });
+  }
 }
 
 
 /*concert-this*/
 if (process.argv[2] === "concert-this") {
-    var artist = process.argv.slice(3).join(" ");
+        var artist = process.argv.slice(3).join(" ");
      getConcertInfo(artist);
+      
 }
 
 /*spotify-this-song*/
